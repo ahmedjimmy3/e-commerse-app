@@ -11,7 +11,7 @@ const auth = (systemRoles) =>{
             return next(new Error('Invalid token',{cause:400}))
         }
         token = token.split(process.env.TOKEN_PREFIX)[1]
-        const payload = jwt.verify(token , process.env.SECRET_KEY)
+        const payload = jwt.verify(token , process.env.JWT_SECRET_KEY)
         if(!payload || !payload.id){
             return next(new Error('Invalid credentials',{cause:403}))
         }

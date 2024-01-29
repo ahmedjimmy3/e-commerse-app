@@ -8,6 +8,8 @@ const initiateApp = (app , express)=>{
     app.use(express.json())
     app.use('/auth' , Routers.authRouter)
     app.use('/user',Routers.userRouter)
+    app.use('/category',Routers.categoryRouter)
+    app.use('/subCategory',Routers.subCategoryRouter)
 
     app.use(errorHandler)
 
