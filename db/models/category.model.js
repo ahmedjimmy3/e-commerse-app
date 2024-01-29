@@ -14,13 +14,11 @@ const categorySchema = new Schema(
     },
     {
         timestamps:true,
-        toObject:true,
-        toJSON:true
+        toObject:{virtuals:true},
+        toJSON:{virtuals:true}
     }
 )
 
-categorySchema.set('toJSON', { virtuals: true })
-categorySchema.set('toObject', { virtuals: true })
 categorySchema.virtual('Sub-Categories',{
     ref:'SubCategory',
     localField:'_id',
