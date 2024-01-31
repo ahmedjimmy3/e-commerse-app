@@ -11,8 +11,9 @@ export const addBrand = async(req,res,next)=>{
 
     const isSubCategoryExist = await SubCategory.findById(subCategoryId).populate('categoryId')
     if(!isSubCategoryExist){return next(new Error('This sub-category not found',{cause:404}))}
+
     const isBrandExist = await Brand.findOne({name},{subCategoryId})
-    if(isBrandExist){return next(new Error('This brand already exist',{cause:409}))}
+    if(isBrandExist){return next(new Error('This brand already exist',{cause:400}))}
 
     if(isSubCategoryExist.categoryId._id.toString() != categoryId){
         return next(new Error('Category not found',{cause:404}))
@@ -20,7 +21,7 @@ export const addBrand = async(req,res,next)=>{
 
     const slug = slugify(name,'-')
 
-    if(!req.file){return next(new Error('please upload at least one photo',{cause:400}))}
+    if(!req.file){return next(new Error('please upload the brand logo..',{cause:400}))}
     const folderId = generateUniqueString(6)
     const {secure_url,public_id} = await cloudinary.uploader.upload(req.file.path,{
         folder:`${process.env.MAIN_FOLDER}/Categories/${isSubCategoryExist.categoryId.folderId}/subCategories/${isSubCategoryExist.folderId}/Brands/${folderId}`

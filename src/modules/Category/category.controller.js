@@ -62,8 +62,12 @@ export const updateCategory = async(req,res,next)=>{
 }
 
 export const getAllCategories = async(req,res,next)=>{
-    const allCategories = await Category.find().populate([
-        {path:'Sub-Categories' , populate:'Brands'}
+    const allCategories = await Category.find().populate([{
+        path:'Sub-Categories' ,
+        populate:[
+            {path:'Brands'}
+        ]
+    }
     ])
     res.status(200).json({message:'All categories',data:allCategories})
 }
