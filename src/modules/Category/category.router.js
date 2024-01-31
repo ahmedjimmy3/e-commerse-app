@@ -3,7 +3,7 @@ import * as categoryController from './category.controller.js'
 import asyncWrapper from '../../utils/async-wrapper.js'
 import auth from "../../middlewares/auth.middleware.js";
 import multerMiddleware from "../../middlewares/multer-middleware.js";
-import allowedExtensions from "../../utils/allowed-extenstions.js";
+import allowedExtensions from "../../utils/allowed-extensions.js";
 import endPointsRoles from "./category-endpoints.js";
 
 const router = Router();
@@ -23,6 +23,11 @@ router.put('/:categoryId',
 
 router.get('/',
     asyncWrapper(categoryController.getAllCategories)
+)
+
+router.delete('/:categoryId',
+    asyncWrapper(auth(endPointsRoles.ADD_CATEGORY)),
+    asyncWrapper(categoryController.deleteCategory)
 )
 
 export default router

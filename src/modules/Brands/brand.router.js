@@ -1,18 +1,19 @@
 import { Router } from "express";
-import * as subCategoryController from './sub-category.controller.js'
+import * as brandController from './brand.controller.js'
 import asyncWrapper from '../../utils/async-wrapper.js'
 import auth from "../../middlewares/auth.middleware.js";
 import multerMiddleware from "../../middlewares/multer-middleware.js";
 import allowedExtensions from "../../utils/allowed-extensions.js";
-import endPointsRoles from "./sub-category-endpoints.js";
+import endPointsRoles from "./brand-endpoints.js";
 
-const router = Router();
+const router = Router({caseSensitive:true});
 
 
-router.post('/:categoryId', 
-    asyncWrapper(auth(endPointsRoles.ADD_SUB_CATEGORY)),
+router.post('/', 
+    asyncWrapper(auth(endPointsRoles.ADD_BRAND)),
     multerMiddleware({extension:allowedExtensions.IMAGE_FORMAT}).single('image'),
-    asyncWrapper(subCategoryController.addSubCategory)
+    asyncWrapper(brandController.addBrand)
 )
+
 
 export default router

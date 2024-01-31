@@ -2,6 +2,8 @@ import Category from "../../../db/models/category.model.js"
 import slugify from 'slugify'
 import generateUniqueString from '../../utils/generate-unique-string.js'
 import cloudinary from "../../utils/cloduinary.js"
+import SubCategory from '../../../db/models/sub-category.model.js'
+import Brand from '../../../db/models/brand.model.js'
 
 export const addCategory = async(req,res,next)=>{
     const { name } = req.body
@@ -60,6 +62,29 @@ export const updateCategory = async(req,res,next)=>{
 }
 
 export const getAllCategories = async(req,res,next)=>{
-    const allCategories = await Category.find().populate('Sub-Categories')
+    const allCategories = await Category.find().populate([
+        {path:'Sub-Categories' , populate:'Brands'}
+    ])
     res.status(200).json({message:'All categories',data:allCategories})
+}
+
+export const deleteCategory = async(req,res,next)=>{
+    const {categoryId} = req.params
+
+    const category = await Category.findByIdAndDelete(categoryId)
+    if(!category){return next(new Error('Category not found',{cause:404}))}
+
+    const deleteSubCategories = await SubCategory.deleteMany({categoryId})
+    if(!deleteSubCategories.deletedCount){
+        console.log('No sub-categories')
+    }
+    const deleteBrands = await Brand.deleteMany({categoryId})
+    if(!deleteBrands.deletedCount){
+        console.log('No Brands')
+    }
+
+    await cloudinary.api.delete_resources_by_prefix(`${process.env.MAIN_FOLDER}/Categories/${category.folderId}`)
+    await cloudinary.api.delete_folder(`${process.env.MAIN_FOLDER}/Categories/${category.folderId}`)
+
+    res.status(200).json({message:'Deleted Done'})
 }

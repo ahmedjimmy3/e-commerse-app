@@ -1,6 +1,6 @@
 import { Schema , model} from "mongoose";
 
-const subCategorySchema = new Schema(
+const brandSchema = new Schema(
     {
         name:{type:String,required:true,unique:true,trim:true},
         slug:{type:String,required:true,unique:true,trim:true},
@@ -11,7 +11,8 @@ const subCategorySchema = new Schema(
         folderId:{type:String ,required:true,unique:true},
         addedBy:{type:Schema.Types.ObjectId , ref:'User', required:true},
         updatedBy:{type:Schema.Types.ObjectId , ref:'User'},
-        categoryId:{type:Schema.Types.ObjectId, ref:'Category', required:true}
+        categoryId:{type:Schema.Types.ObjectId, ref:'Category', required:true},
+        subCategoryId:{type:Schema.Types.ObjectId, ref:'SubCategory', required:true},
     },
     {
         timestamps:true,
@@ -20,12 +21,6 @@ const subCategorySchema = new Schema(
     }
 )
 
-subCategorySchema.virtual('Brands',{
-    ref:'Brand',
-    localField:'_id',
-    foreignField:'subCategoryId'
-})
+const Brand = model('Brand' , brandSchema)
 
-const SubCategory = model('SubCategory' , subCategorySchema)
-
-export default SubCategory
+export default Brand
