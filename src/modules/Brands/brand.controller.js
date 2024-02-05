@@ -45,7 +45,6 @@ export const addBrand = async(req,res,next)=>{
 async function createDocument(data) {
     const newDocument = new Brand(data);
     await newDocument.save();
-    // If you have other related operations, perform them here
 }
 
 export const createDocumentController = async (req, res) => {
