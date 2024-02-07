@@ -29,8 +29,6 @@ export const addBrand = async(req,res,next)=>{
     })
     req.folder = {folderPath:`${process.env.MAIN_FOLDER}/Categories/${isSubCategoryExist.categoryId.folderId}/subCategories/${isSubCategoryExist.folderId}/Brands/${folderId}`}
 
-    const x=3
-    x= 7
     const newBrand = {
         name,
         slug,
