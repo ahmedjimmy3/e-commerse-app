@@ -1,7 +1,7 @@
+import { query } from 'express'
 import Brand from '../../../db/models/brand.model.js'
 import SubCategory from '../../../db/models/sub-category.model.js'
 import cloudinary from '../../utils/cloduinary.js'
-import rollbackOperation from '../../utils/general-rollback-function.js'
 import generateUniqueString from '../../utils/generate-unique-string.js'
 import slugify from 'slugify'
 
@@ -27,6 +27,7 @@ export const addBrand = async(req,res,next)=>{
     const {secure_url,public_id} = await cloudinary.uploader.upload(req.file.path,{
         folder:`${process.env.MAIN_FOLDER}/Categories/${isSubCategoryExist.categoryId.folderId}/subCategories/${isSubCategoryExist.folderId}/Brands/${folderId}`
     })
+    req.folder = {folderPath:`${process.env.MAIN_FOLDER}/Categories/${isSubCategoryExist.categoryId.folderId}/subCategories/${isSubCategoryExist.folderId}/Brands/${folderId}`}
 
     const newBrand = {
         name,
@@ -37,21 +38,8 @@ export const addBrand = async(req,res,next)=>{
         categoryId,
         subCategoryId
     }
-
     const createdBrand = await Brand.create(newBrand)
+    req.createdDocument = {model:Brand , query:createdBrand._id}
+
     res.status(201).json({message:'Brand created successfully' , data:createdBrand})
 }
-
-async function createDocument(data) {
-    const newDocument = new Brand(data);
-    await newDocument.save();
-}
-
-export const createDocumentController = async (req, res) => {
-    const result = await rollbackOperation(createDocument, req.body);
-    if (result.success) {
-        res.status(201).json({ message: result.message });
-    } else {
-        res.status(500).json({ error: result.error });
-    }
-};
