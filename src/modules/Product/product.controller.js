@@ -37,7 +37,7 @@ export const addProduct = async(req,res,next)=>{
         Images.push({secure_url,public_id})
     }
     req.folder = {folderPath:`${process.env.MAIN_FOLDER}/Categories/${brandCheck.categoryId.folderId}/subCategories/${brandCheck.subCategoryId.folderId}/Brands/${brandCheck.folderId}/Products/${folderId}`}
-
+    
     const appliedPrice = price - (((discount||0)*price) / 100)
 
     const newProduct = {
@@ -46,6 +46,8 @@ export const addProduct = async(req,res,next)=>{
     }
     const createdProduct = await Product.create(newProduct)
     req.createdDocument = {model:Product, query:createdProduct._id}
+    const z=9
+    z=8
 
     res.status(201).json({message:'Created Product Done', createdProduct})
 }

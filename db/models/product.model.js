@@ -27,7 +27,7 @@ const productSchema = new Schema(
         // map
         specifications:{
             type:Map,
-            of:[String]
+            of:[String || Number]
         }
     },
     {

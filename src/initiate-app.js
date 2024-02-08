@@ -15,7 +15,7 @@ const initiateApp = (app , express)=>{
     app.use('/brand',Routers.brandRouter)
     app.use('/product',Routers.ProductRouter)
 
-    app.use(errorHandler ,rollbackCreatedDocuments ,rollbackUploadedFiles)
+    app.use(errorHandler,rollbackCreatedDocuments,rollbackUploadedFiles)
 
     app.listen(3000, () => console.log(`App listening on port 3000!`))
 }
