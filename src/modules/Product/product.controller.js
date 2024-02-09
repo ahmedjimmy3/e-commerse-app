@@ -4,6 +4,7 @@ import systemRoles from "../../utils/system-roles.js"
 import slugify from 'slugify'
 import cloudinary from "../../utils/cloduinary.js"
 import generateUniqueString from "../../utils/generate-unique-string.js"
+
 export const addProduct = async(req,res,next)=>{
     const {title,description,basePrice,discount,stock,specifications} = req.body
     const {categoryId,subCategoryId,brandId} = req.query
