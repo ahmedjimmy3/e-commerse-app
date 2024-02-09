@@ -3,9 +3,10 @@ import { Schema,model } from "mongoose";
 const productSchema = new Schema(
     {
         // strings
-        title:{type:String,required:true},
+        title:{type:String,required:true,trim:true},
         slug:{type:String,required:true},
-        description:{type:String,required:true},
+        description:{type:String},
+        folderId:{type:String,required:true},
         // IDs
         addedBy:{type:Schema.Types.ObjectId,ref:'User',required:true},
         updatedBy:{type:Schema.Types.ObjectId,ref:'User'},
@@ -17,17 +18,16 @@ const productSchema = new Schema(
             secure_url:{type:String,required:true} , 
             public_id:{type:String,required:true}
         }],
-        folderId:{type:String,required:true},
         // numbers
-        price:{type:Number,required:true},
+        basePrice:{type:Number,required:true},
         discount:{type:Number,default:0},
         appliedPrice:{type:Number,required:true},
-        stock:{type:Number,required:true,min:1},
-        avgRating:{type:Number,min:1,max:5},
+        stock:{type:Number,required:true,min:0,default:0},
+        avgRating:{type:Number,min:0,max:5,default:0},
         // map
         specifications:{
             type:Map,
-            of:[String || Number]
+            of:[String | Number]
         }
     },
     {

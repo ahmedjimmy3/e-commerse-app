@@ -5,7 +5,7 @@ import slugify from 'slugify'
 import cloudinary from "../../utils/cloduinary.js"
 import generateUniqueString from "../../utils/generate-unique-string.js"
 export const addProduct = async(req,res,next)=>{
-    const {title,description,price,discount,stock,specifications} = req.body
+    const {title,description,basePrice,discount,stock,specifications} = req.body
     const {categoryId,subCategoryId,brandId} = req.query
     const {_id} = req.authUser
 
@@ -26,28 +26,27 @@ export const addProduct = async(req,res,next)=>{
         return next(new Error('You are not allow to add product in this brand',{cause:401}))
     }
 
-    const slug = slugify(title,'-')
+    const slug = slugify(title,{lower:true,replacement:'-'})
 
     const folderId = generateUniqueString(6)
     let Images = []
+    const folder = brandCheck.Image.public_id.split(`${brandCheck.folderId}/`)[0]
     for (const file of req.files) {
         const {secure_url,public_id} = await cloudinary.uploader.upload(file.path, {
-            folder:`${process.env.MAIN_FOLDER}/Categories/${brandCheck.categoryId.folderId}/subCategories/${brandCheck.subCategoryId.folderId}/Brands/${brandCheck.folderId}/Products/${folderId}`
+            folder: folder + `${brandCheck.folderId}` + `/Products/${folderId}`
         })
         Images.push({secure_url,public_id})
     }
-    req.folder = {folderPath:`${process.env.MAIN_FOLDER}/Categories/${brandCheck.categoryId.folderId}/subCategories/${brandCheck.subCategoryId.folderId}/Brands/${brandCheck.folderId}/Products/${folderId}`}
+    req.folder = folder + `${brandCheck.folderId}` + `/Products/${folderId}`
     
-    const appliedPrice = price - (((discount||0)*price) / 100)
+    const appliedPrice = basePrice - (((discount||0)*basePrice) / 100)
 
     const newProduct = {
         categoryId,subCategoryId,brandId,addedBy:_id,folderId,Images,
-        title,description,slug,price,discount,appliedPrice,stock,specifications,
+        title,description,slug,basePrice,discount,appliedPrice,stock,specifications:JSON.parse(specifications),
     }
     const createdProduct = await Product.create(newProduct)
     req.createdDocument = {model:Product, query:createdProduct._id}
-    const z=9
-    z=8
 
     res.status(201).json({message:'Created Product Done', createdProduct})
 }
