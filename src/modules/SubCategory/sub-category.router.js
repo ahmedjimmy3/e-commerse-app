@@ -10,9 +10,24 @@ const router = Router();
 
 
 router.post('/:categoryId', 
-    asyncWrapper(auth(endPointsRoles.ADD_SUB_CATEGORY)),
+    asyncWrapper(auth(endPointsRoles.GENERAL_SUB_CATEGORY)),
     multerMiddleware({extension:allowedExtensions.IMAGE_FORMAT}).single('image'),
     asyncWrapper(subCategoryController.addSubCategory)
+)
+
+router.get('/',
+    asyncWrapper(subCategoryController.allSubCategories)
+)
+
+router.put('/:subCategoryId',
+    asyncWrapper(auth(endPointsRoles.GENERAL_SUB_CATEGORY)),
+    multerMiddleware({extension:allowedExtensions.IMAGE_FORMAT}).single('image'),
+    asyncWrapper(subCategoryController.updateSubCategory)
+)
+
+router.delete('/:subCategoryId',
+    asyncWrapper(auth(endPointsRoles.GENERAL_SUB_CATEGORY)),
+    asyncWrapper(subCategoryController.deleteSubCategory)
 )
 
 export default router

@@ -21,6 +21,12 @@ const brandSchema = new Schema(
     }
 )
 
+brandSchema.virtual('Products',{
+    ref:'Product',
+    localField:'_id',
+    foreignField:'brandId'
+})
+
 const Brand = model('Brand' , brandSchema)
 
 export default Brand

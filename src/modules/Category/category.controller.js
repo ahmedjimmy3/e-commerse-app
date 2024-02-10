@@ -67,8 +67,7 @@ export const getAllCategories = async(req,res,next)=>{
         populate:[
             {path:'Brands'}
         ]
-    }
-    ])
+    }])
     res.status(200).json({message:'All categories',data:allCategories})
 }
 

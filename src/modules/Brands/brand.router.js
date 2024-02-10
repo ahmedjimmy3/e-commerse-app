@@ -15,5 +15,9 @@ router.post('/',
     asyncWrapper(brandController.addBrand)
 )
 
+router.get('/',
+    asyncWrapper(brandController.allBrands)
+)
+
 
 export default router

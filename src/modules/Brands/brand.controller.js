@@ -43,3 +43,8 @@ export const addBrand = async(req,res,next)=>{
 
     res.status(201).json({message:'Brand created successfully' , data:createdBrand})
 }
+
+export const allBrands = async(req,res,next)=>{
+    const brands = await Brand.find().select('-_id -folderId')
+    res.status(200).json({message:'All Brands', data:brands})
+}
