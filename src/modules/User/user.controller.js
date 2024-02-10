@@ -6,6 +6,7 @@ import Product from '../../../db/models/product.model.js'
 import cloudinary from "../../utils/cloduinary.js";
 import sendEmailService from "../services/send-email.services.js";
 import jwt from 'jsonwebtoken'
+import systemRoles from "../../utils/system-roles.js";
 
 export const profileData = async(req,res,next)=>{
     const {userId} = req.params
@@ -16,54 +17,57 @@ export const profileData = async(req,res,next)=>{
 
 export const deleteUser = async(req,res,next)=>{
     const {userId} = req.params
+    const {_id,role} = req.authUser
+    if(role == systemRoles.SUPER_ADMIN || role == systemRoles.USER){
+        const deleteUser = await User.findByIdAndDelete(userId)
+        if(!deleteUser){return next(new Error('Deletion Failed',{cause:400}))}
+        return res.status(200).json({message:'User Deleted successfully'})
+    }
+    if(role == systemRoles.ADMIN){
+        const subCategories = await SubCategory.find({addedBy:_id})
+        if(subCategories.length){
+            for (const subCategory of subCategories) {
+                const subCategoryId = subCategory._id
+                const folderPath = subCategory.Image.public_id.split(`${subCategory.folderId}/`)[0]
+                await cloudinary.api.delete_resources_by_prefix(folderPath)
+                await cloudinary.api.delete_folder(folderPath)
+                const deleteBrands = await Brand.deleteMany({subCategoryId})
+                if(!deleteBrands.deletedCount){console.log('No Brands')}
+                const deleteProducts = await Product.deleteMany({subCategoryId})
+                if(deleteProducts.deletedCount){console.log('No Products')}
+            }
+        }
+        const deleteAllSubCategories = await SubCategory.deleteMany({addedBy:_id})
+        if(!deleteAllSubCategories.deletedCount){
+            console.log('No Sub-categories')
+        }
+        const brands = await Brand.find({addedBy:_id})
+        if(brands.length){
+            for (const brand of brands) {
+                const brandId = brand._id
+                const folderPath = brand.Image.public_id.split(`${brand.folderId}/`)[0]
+                await cloudinary.api.delete_resources_by_prefix(folderPath)
+                await cloudinary.api.delete_folder(folderPath)
+                const deleteProducts = await Product.deleteMany({brandId})
+                if(deleteProducts.deletedCount){console.log('No Products')}
+            }
+            const deleteAllBrands = await Brand.deleteMany({addedBy:_id})
+            if(deleteAllBrands.deletedCount){console.log('No Brands')}
+        }
+        const products = await Product.find({addedBy:_id})
+        if(products.length){
+            for (const product of products) {
+                const folderPath = product.Images[0].public_id.split(`${product.folderId}/`)[0]
+                await cloudinary.api.delete_resources_by_prefix(folderPath)
+                await cloudinary.api.delete_folder(folderPath)
+            }
+            const deleteAllProducts = await Product.deleteMany({addedBy:_id})
+            if(deleteAllProducts.deletedCount){console.log('No Products')}
+        }
+    }
     const deleteUser = await User.findByIdAndDelete(userId)
     if(!deleteUser){return next(new Error('Deletion Failed',{cause:400}))}
-
-    const categories = await Category.find({addedBy:userId})
-    if(categories.length){
-        for (const category of categories) {
-            const folderPath = category.Image.public_id.split(`${category.folderId}/`)[0]
-            await cloudinary.api.delete_resources_by_prefix(folderPath)
-            await cloudinary.api.delete_folder(folderPath)
-        }
-        const deleteCategory = await Category.deleteMany({addedBy:userId})
-        if(!deleteCategory.deletedCount){console.log('Categories not found')}
-    }
-
-    const subCategories = await SubCategory.find({addedBy:userId})
-    if(subCategories.length){
-        for (const subCategory of subCategories) {
-            const folderPath = subCategory.Image.public_id.split(`${subCategory.folderId}/`)[0]
-            await cloudinary.api.delete_resources_by_prefix(folderPath)
-            await cloudinary.api.delete_folder(folderPath)
-        }
-        const deleteSubCategories = await SubCategory.deleteMany({addedBy:userId})
-        if(!deleteSubCategories.deletedCount){console.log('SubCategories not found')}
-    }
-
-    const Brands = await SubCategory.find({addedBy:userId})
-    if(Brands.length){
-        for (const brand of Brands) {
-            const folderPath = brand.Image.public_id.split(`${brand.folderId}/`)[0]
-            await cloudinary.api.delete_resources_by_prefix(folderPath)
-            await cloudinary.api.delete_folder(folderPath)
-        }
-        const deleteBrands = await Brand.deleteMany({addedBy:userId})
-        if(!deleteBrands.deletedCount){console.log('Brands not found')}
-    }
-
-    const products = await Product.find({addedBy:userId})
-    if(products.length){
-        for (const product of products) {
-            const folderPath = product.Images[0].public_id.split(`${product.folderId}/`)[0]
-            await cloudinary.api.delete_resources_by_prefix(folderPath)
-            await cloudinary.api.delete_folder(folderPath)
-        }
-        const deleteProducts = await Product.deleteMany({addedBy:userId})
-        if(!deleteSubCategories.deletedCount){console.log('Products not found')}
-    }
-    
-    res.status(200).json({message:'Deleted Done'})
+    res.status(200).json({message:'User Deleted successfully'})
 }
 
 export const updateUser = async(req,res,next)=>{
