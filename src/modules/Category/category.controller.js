@@ -5,6 +5,7 @@ import cloudinary from "../../utils/cloduinary.js"
 import SubCategory from '../../../db/models/sub-category.model.js'
 import Brand from '../../../db/models/brand.model.js'
 import Product from "../../../db/models/product.model.js"
+import { populate } from "dotenv"
 
 export const addCategory = async(req,res,next)=>{
     const { name } = req.body
@@ -22,6 +23,7 @@ export const addCategory = async(req,res,next)=>{
     const {secure_url,public_id} = await cloudinary.uploader.upload(req.file.path, {
         folder: `${process.env.MAIN_FOLDER}/Categories/${folderId}`
     })
+    req.folder = `${process.env.MAIN_FOLDER}/Categories/${folderId}`
     // new Category
     const newCategory = {
         name,
@@ -32,6 +34,8 @@ export const addCategory = async(req,res,next)=>{
     }
     // create category
     const categoryCreated = await Category.create(newCategory)
+    req.createdDocument = {model:Category , query:categoryCreated._id}
+
     res.status(201).json({message:'Category created successfully',categoryCreated})
 }
 
@@ -65,9 +69,12 @@ export const updateCategory = async(req,res,next)=>{
 export const getAllCategories = async(req,res,next)=>{
     const allCategories = await Category.find().populate([{
         path:'Sub-Categories' ,
-        populate:[
-            {path:'Brands'}
-        ]
+        populate:[{
+            path:'Brands',
+            populate:[{
+                path:'Products',
+            }]
+        }]
     }])
     res.status(200).json({message:'All categories',data:allCategories})
 }

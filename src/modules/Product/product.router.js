@@ -9,9 +9,15 @@ import allowedExtensions from '../../utils/allowed-extensions.js';
 const router = Router()
 
 router.post('/',
-    asyncWrapper(auth(endpointRoles.ADD_PRODUCT)),
+    asyncWrapper(auth(endpointRoles.GENERAL_PRODUCT)),
     multerMiddleware({extension:allowedExtensions.IMAGE_FORMAT}).array('image',3),
     asyncWrapper(productController.addProduct)
+)
+
+router.put('/:productId',
+    asyncWrapper(auth(endpointRoles.GENERAL_PRODUCT)),
+    multerMiddleware({extension:allowedExtensions.IMAGE_FORMAT}).single('image'),
+    asyncWrapper(productController.updateProduct)
 )
 
 export default router

@@ -51,3 +51,47 @@ export const addProduct = async(req,res,next)=>{
 
     res.status(201).json({message:'Created Product Done', createdProduct})
 }
+
+export const updateProduct = async(req,res,next)=>{
+    const {title,description,basePrice,discount,oldPublicId,specifications,stock} = req.body
+    const {productId} = req.params
+    const {_id} = req.authUser
+
+    const productFound = await Product.findById(productId)
+    if(!productFound){return next(new Error('Product not found',{cause:404}))}
+
+    if(productFound.addedBy.toString()!= _id.toString()&& req.authUser.role != systemRoles.SUPER_ADMIN){
+        return next(new Error('You are not authorized to update this product',{cause:401}))
+    }
+
+    if(title){
+        productFound.title = title
+        productFound.slug = slugify(title,{replacement:'-',lower:true})
+    }
+    if(description){ productFound.description = description}
+    if(specifications){productFound.specifications = JSON.parse(specifications)}
+    if(stock){productFound.stock = stock}
+    if(basePrice){productFound.basePrice = basePrice}
+    if(discount){productFound.discount = discount}
+
+    const appliedPrice = (basePrice||productFound.basePrice) - (((discount||productFound.discount)*(basePrice||productFound.basePrice)) / 100)
+    productFound.appliedPrice = appliedPrice
+
+    if(oldPublicId){
+        const folderPath = productFound.Images[0].public_id.split(`${productFound.folderId}/`)[0]
+        if(!req.file){return next(new Error('Please upload image',{cause:400}))}
+        const {secure_url} = await cloudinary.uploader.upload(req.file.path,{
+            public_id:oldPublicId
+        })
+        productFound.Images.map((img)=>{
+            if(img.public_id == oldPublicId){
+                img.secure_url = secure_url
+            }
+        })
+        req.folder = folderPath + `${productFound.folderId}`
+    }
+
+
+    await productFound.save()
+    res.status(200).json({message:'Updated Done'})
+}

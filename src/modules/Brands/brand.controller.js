@@ -28,7 +28,7 @@ export const addBrand = async(req,res,next)=>{
     const {secure_url,public_id} = await cloudinary.uploader.upload(req.file.path,{
         folder:`${process.env.MAIN_FOLDER}/Categories/${isSubCategoryExist.categoryId.folderId}/subCategories/${isSubCategoryExist.folderId}/Brands/${folderId}`
     })
-    req.folder = {folderPath:`${process.env.MAIN_FOLDER}/Categories/${isSubCategoryExist.categoryId.folderId}/subCategories/${isSubCategoryExist.folderId}/Brands/${folderId}`}
+    req.folder = `${process.env.MAIN_FOLDER}/Categories/${isSubCategoryExist.categoryId.folderId}/subCategories/${isSubCategoryExist.folderId}/Brands/${folderId}`
 
     const newBrand = {
         name,
