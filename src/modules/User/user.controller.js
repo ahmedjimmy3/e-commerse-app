@@ -84,10 +84,10 @@ export const updateUser = async(req,res,next)=>{
         })
         if(!isEmailSend){return next(new Error('Could not sent this email'))}
     }
-    const updateUser = await User.findByIdAndUpdate(userId,
-            {username,email,phoneNumbers,addresses,age},
-            {new:true}
-        )
+    if(username){user.email = email}
+    if(phoneNumbers){user.phoneNumbers = phoneNumbers}
+    if(addresses){user.addresses = addresses}
+    if(age){user.age = age}
 
     await user.save()
     res.status(200).json({message:'Updated Done',updateUser})
