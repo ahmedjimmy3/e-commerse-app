@@ -95,5 +95,3 @@ export const deleteSubCategory = async(req,res,next)=>{
 
     res.status(200).json({message:'Deleted Done:)'})
 }
-
-// ${process.env.MAIN_FOLDER}/Categories/${category.folderId}/subCategories/${folderId}
