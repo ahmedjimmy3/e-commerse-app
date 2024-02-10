@@ -4,6 +4,7 @@ import generateUniqueString from '../../utils/generate-unique-string.js'
 import cloudinary from "../../utils/cloduinary.js"
 import SubCategory from '../../../db/models/sub-category.model.js'
 import Brand from '../../../db/models/brand.model.js'
+import Product from "../../../db/models/product.model.js"
 
 export const addCategory = async(req,res,next)=>{
     const { name } = req.body
@@ -84,6 +85,10 @@ export const deleteCategory = async(req,res,next)=>{
     const deleteBrands = await Brand.deleteMany({categoryId})
     if(!deleteBrands.deletedCount){
         console.log('No Brands')
+    }
+    const deleteProducts = await Product.deleteMany({categoryId})
+    if(!deleteProducts.deletedCount){
+        console.log('No Products')
     }
 
     await cloudinary.api.delete_resources_by_prefix(`${process.env.MAIN_FOLDER}/Categories/${category.folderId}`)

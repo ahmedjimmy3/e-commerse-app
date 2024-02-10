@@ -1,7 +1,8 @@
 import systemRoles from "../../utils/system-roles.js";
 
 const endPointsRoles = {
-    ADD_BRAND: [systemRoles.ADMIN]
+    GENERAL_BRAND: [systemRoles.ADMIN],
+    ADMIN_SUPER_ADMIN: [systemRoles.ADMIN, systemRoles.SUPER_ADMIN]
 }
 
 export default endPointsRoles
