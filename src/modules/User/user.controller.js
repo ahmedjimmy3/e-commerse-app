@@ -95,4 +95,4 @@ export const updateUser = async(req,res,next)=>{
 
     await user.save()
     res.status(200).json({message:'Updated Done',updateUser})
-}
+}   

@@ -4,6 +4,7 @@ import systemRoles from "../../utils/system-roles.js"
 import slugify from 'slugify'
 import cloudinary from "../../utils/cloduinary.js"
 import generateUniqueString from "../../utils/generate-unique-string.js"
+import APIFeatures from "../../utils/api-features.js"
 
 export const addProduct = async(req,res,next)=>{
     const {title,description,basePrice,discount,stock,specifications} = req.body
@@ -94,4 +95,18 @@ export const updateProduct = async(req,res,next)=>{
 
     await productFound.save()
     res.status(200).json({message:'Updated Done'})
+}
+
+export const getAllProducts = async(req,res,next)=>{
+    const {page,size,sort , ...search} = req.query
+    console.log(search);
+    const features = new APIFeatures( req.query, Product.find())
+    .filter(search)
+    // .search(search)
+    // .pagination({page,size})
+    // .sort(sort)
+
+    const products = await features.mongooseQuery
+
+    res.status(200).json({message:'All Products',products})
 }
