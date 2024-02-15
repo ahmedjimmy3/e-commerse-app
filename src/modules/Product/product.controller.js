@@ -99,11 +99,10 @@ export const updateProduct = async(req,res,next)=>{
 
 export const getAllProducts = async(req,res,next)=>{
     const {page,size,sort , ...search} = req.query
-    console.log(search);
-    const features = new APIFeatures( req.query, Product.find())
-    .filter(search)
+    const features = new APIFeatures(Product.find())
+    // .filter(search)
     // .search(search)
-    // .pagination({page,size})
+    .pagination({page,size})
     // .sort(sort)
 
     const products = await features.mongooseQuery

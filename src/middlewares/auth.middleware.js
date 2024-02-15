@@ -15,7 +15,7 @@ const auth = (systemRoles) =>{
         if(!payload || !payload.id){
             return next(new Error('Invalid credentials',{cause:403}))
         }
-        const authUser = await UserModel.findById(payload.id)
+        const authUser = await UserModel.findById(payload.id, 'username email role')
         if(!authUser){
             return next(new Error('You should register first please',{cause:404}))
         }

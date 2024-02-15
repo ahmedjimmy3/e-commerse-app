@@ -1,7 +1,6 @@
 import paginationFunction from './pagination.js'
 class APIFeatures {
-    constructor(query , mongooseQuery){
-        this.query = query,
+    constructor(mongooseQuery){
         this.mongooseQuery = mongooseQuery
     }
     
