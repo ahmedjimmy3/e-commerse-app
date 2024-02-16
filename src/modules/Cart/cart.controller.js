@@ -1,5 +1,9 @@
 import Cart from "../../../db/models/cart.model.js";
-import Product from "../../../db/models/product.model.js";
+import { getUserCart } from "./utils/get-user-cart.js";
+import { checkProductAvailability } from "./utils/check-product-in-db.js";
+import { createCart } from "./utils/create-cart.js";
+import { updateProductQuantity } from "./utils/update-product-quantity.js";
+import { pushNewProduct } from "./utils/add-product-to-cart.js";
 
 /**
  * @param {productId , quantity} from req.body
@@ -17,57 +21,21 @@ export const addProductToCart = async(req,res,next)=>{
     const {productId , quantity} = req.body
     const {_id} = req.authUser
 
-    const product = await Product.findById(productId)
-    if(!product){return next(new Error('Product not found',{cause:404}))}
-    if(product.stock<quantity){return next(new Error('This quantity not available',{cause:400}))}
+    const product = await checkProductAvailability(quantity,productId)
+    if(!product){return next(new Error('Product not found or not available',{cause:404}))}
 
-    const userCart = await Cart.findOne({userId:_id})
+    const userCart = await getUserCart(_id)
     if(!userCart){
-        const cartObj = {
-            userId:_id,
-            products:[
-                {
-                    productId,
-                    quantity,
-                    basePrice: product.appliedPrice,
-                    finalPrice: product.appliedPrice * quantity,
-                    title: product.title
-                }
-            ],
-            subTotal: product.appliedPrice * quantity
-        }
-        const createdCart = await Cart.create(cartObj)
+        const createdCart = await createCart(_id,productId,quantity,product)
         return res.status(201).json({message:'Product added successfully', data:createdCart})
     }
 
-    let isProductExist = false
-    for (const product of userCart.products) {
-        if(product.productId.toString() === productId){
-            product.quantity = quantity
-            product.finalPrice = product.basePrice * quantity
-            isProductExist = true
-        }
+    const isUpdated = await updateProductQuantity(userCart,productId,quantity)
+    if(!isUpdated){
+        const added = await pushNewProduct(userCart,product,quantity)
+        if(!added){return next(new Error('Product not added to cart',{cause:400}))}
     }
-
-    if(!isProductExist){
-        userCart.products.push({
-            productId,
-            quantity,
-            basePrice: product.appliedPrice,
-            finalPrice: product.appliedPrice * quantity,
-            title: product.title
-        })
-    }
-
-    let newSubTotal = 0
-    for (const pro of userCart.products) {
-        newSubTotal += pro.finalPrice
-    }
-    userCart.subTotal = newSubTotal
-
-    await userCart.save()
     res.status(200).json({message:'Product added successfully',data:userCart})
-
 }
 
 export const removeFromCart = async(req,res,next)=>{
