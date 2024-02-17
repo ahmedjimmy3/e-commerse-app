@@ -109,3 +109,20 @@ export const getAllProducts = async(req,res,next)=>{
 
     res.status(200).json({message:'All Products',products})
 }
+
+export const getProductById = async(req,res,next)=>{
+    const {productId} = req.params
+    const product = await Product.findById(productId)
+    if(!product){return next(new Error('This product is not found',{cause:404}))}
+    res.status(200).json({data:product})
+}
+
+export const deleteProduct = async(req,res,next)=>{
+    const {productId} = req.params
+    const productDeleted = await Product.findByIdAndDelete(productId)
+    if(!productDeleted){return next(new Error('Deletion Failed',{cause:400}))}
+    const folderPath = productDeleted.Images[0].public_id.split(`${productDeleted.folderId}/`)[0]
+    await cloudinary.api.delete_resources_by_prefix(folderPath+`${productDeleted.folderId}`)
+    await cloudinary.api.delete_folder(folderPath+`${productDeleted.folderId}`)
+    res.status(200).json({message:'Deletion Done'})
+}

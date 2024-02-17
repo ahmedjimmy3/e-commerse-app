@@ -84,8 +84,9 @@ export const deleteBrand = async(req,res,next)=>{
     if(!deleteProducts.deletedCount){console.log('No Products')}
 
     const folderPath = brandDeleted.Image.public_id.split(`${brandDeleted.folderId}/`)[0]
-    await cloudinary.api.delete_resources_by_prefix(folderPath)
-    await cloudinary.api.delete_folder(folderPath)
+    const path = folderPath+`${brandDeleted.folderId}`
+    await cloudinary.api.delete_resources_by_prefix(path)
+    await cloudinary.api.delete_folder(path)
 
     res.status(200).json({message:'Deleted Done..'})
 }
