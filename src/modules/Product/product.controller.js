@@ -97,17 +97,24 @@ export const updateProduct = async(req,res,next)=>{
     res.status(200).json({message:'Updated Done'})
 }
 
-export const getAllProducts = async(req,res,next)=>{
-    const {page,size,sort , ...search} = req.query
+export const getAllProductsPaginated = async(req,res,next)=>{
+    const {page,size} = req.query
     const features = new APIFeatures(Product.find())
-    // .filter(search)
-    // .search(search)
     .pagination({page,size})
-    // .sort(sort)
 
     const products = await features.mongooseQuery
 
-    res.status(200).json({message:'All Products',products})
+    res.status(200).json({message:'All Products paginated',data:products})
+}
+
+export const searchProduct = async(req,res,next)=>{
+    const {...search} = req.query
+    const features = new APIFeatures(Product.find())
+    .filter(search)
+
+    const products = await features.mongooseQuery
+
+    res.status(200).json({message:'Search Results',data:products})
 }
 
 export const getProductById = async(req,res,next)=>{
@@ -125,4 +132,11 @@ export const deleteProduct = async(req,res,next)=>{
     await cloudinary.api.delete_resources_by_prefix(folderPath+`${productDeleted.folderId}`)
     await cloudinary.api.delete_folder(folderPath+`${productDeleted.folderId}`)
     res.status(200).json({message:'Deletion Done'})
+}
+
+export const productsForSpecificBrands = async(req,res,next)=>{
+    const { brand } = req.body
+    console.log(brand)
+    const products = await Product.find({brandId: {$in: brand}})
+    res.status(200).json({message:'All products for two brands', data:products})
 }

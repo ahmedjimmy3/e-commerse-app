@@ -4,6 +4,7 @@ import { checkProductAvailability } from "./utils/check-product-in-db.js";
 import { createCart } from "./utils/create-cart.js";
 import { updateProductQuantity } from "./utils/update-product-quantity.js";
 import { pushNewProduct } from "./utils/add-product-to-cart.js";
+import { calcSubTotal } from "./utils/calculate-sub-total.js";
 
 /**
  * @param {productId , quantity} from req.body
@@ -47,11 +48,7 @@ export const removeFromCart = async(req,res,next)=>{
 
     userCart.products = userCart.products.filter(product => product.productId.toString() !== productId )
 
-    let subTotal = 0
-    for (const product of userCart.products) {
-        subTotal += product.finalPrice
-    }
-    userCart.subTotal = subTotal
+    userCart.subTotal = calcSubTotal(userCart)
 
     const newCart = await userCart.save()
 

@@ -21,8 +21,16 @@ router.put('/:productId',
     asyncWrapper(productController.updateProduct)
 )
 
+router.get('/specificBrands',
+    asyncWrapper(productController.productsForSpecificBrands)
+)
+
 router.get('/',
-    asyncWrapper(productController.getAllProducts)
+    asyncWrapper(productController.getAllProductsPaginated)
+)
+
+router.get('/search',
+    asyncWrapper(productController.searchProduct)
 )
 
 router.get('/:productId',
