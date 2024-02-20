@@ -139,4 +139,4 @@ export const productsForSpecificBrands = async(req,res,next)=>{
     console.log(brand)
     const products = await Product.find({brandId: {$in: brand}})
     res.status(200).json({message:'All products for two brands', data:products})
-}
+} 
