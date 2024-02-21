@@ -10,7 +10,7 @@ const router = Router()
 
 router.post('/',
     asyncWrapper(auth(endPointsRoles.ADMIN_SUPER_ADMIN)),
-    asyncWrapper(validationMiddleware(validators.addCouponSchema)),
+    // asyncWrapper(validationMiddleware(validators.addCouponSchema)),
     asyncWrapper(CouponController.addCoupon)
 )
 

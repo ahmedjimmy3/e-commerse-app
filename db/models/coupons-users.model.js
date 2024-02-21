@@ -5,12 +5,12 @@ const couponUsersSchema = Schema(
         couponId:{
             type:Schema.Types.ObjectId,
             ref:'Coupon',
-            required:true
+            // required:true
         },
         userId:{
             type:Schema.Types.ObjectId,
             ref:'User',
-            required:true
+            // required:true
         },
         maxUsage:{
             type:Number,
@@ -24,6 +24,13 @@ const couponUsersSchema = Schema(
     },
     {timestamps:true}
 )
+
+couponUsersSchema.pre('validate',function(next){
+    if(!this.couponId || !this.userId){
+        throw new Error('couponId required')
+    }
+    next()
+})
 
 const CouponUsers = model('CouponUser',couponUsersSchema)
 export default CouponUsers

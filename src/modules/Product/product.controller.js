@@ -5,16 +5,14 @@ import slugify from 'slugify'
 import cloudinary from "../../utils/cloduinary.js"
 import generateUniqueString from "../../utils/generate-unique-string.js"
 import APIFeatures from "../../utils/api-features.js"
+import { checkBrand, uploadImages } from "./utils/product-functions.js"
 
 export const addProduct = async(req,res,next)=>{
     const {title,description,basePrice,discount,stock,specifications} = req.body
     const {categoryId,subCategoryId,brandId} = req.query
     const {_id} = req.authUser
 
-    const brandCheck = await Brand.findById(brandId).populate([
-        {path:'categoryId', select:'folderId'},
-        {path:'subCategoryId', select:'folderId'},
-    ]) 
+    const brandCheck = await checkBrand(brandId)
     if(!brandCheck){return next(new Error('This Brand not found',{cause:404}))}
 
     if(brandCheck.categoryId._id.toString() !== categoryId){
@@ -31,14 +29,8 @@ export const addProduct = async(req,res,next)=>{
     const slug = slugify(title,{lower:true,replacement:'-'})
 
     const folderId = generateUniqueString(6)
-    let Images = []
     const folder = brandCheck.Image.public_id.split(`${brandCheck.folderId}/`)[0]
-    for (const file of req.files) {
-        const {secure_url,public_id} = await cloudinary.uploader.upload(file.path, {
-            folder: folder + `${brandCheck.folderId}` + `/Products/${folderId}`
-        })
-        Images.push({secure_url,public_id})
-    }
+    let Images = await uploadImages(brandCheck,req,folderId,folder)
     req.folder = folder + `${brandCheck.folderId}` + `/Products/${folderId}`
     
     const appliedPrice = basePrice - (((discount||0)*basePrice) / 100)
