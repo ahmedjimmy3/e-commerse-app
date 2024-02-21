@@ -3,6 +3,7 @@ import * as Routers from './modules/index.router.js'
 import errorHandler from './middlewares/errorHandler.middleware.js'
 import rollbackUploadedFiles from "./middlewares/rollback-uploadedFiles.middleware.js"
 import rollbackCreatedDocuments from "./middlewares/rollback-created-documents.middleware.js"
+import cronToChangeExpiredCoupons from "./utils/crons.js"
 
 const initiateApp = (app , express)=>{
     dbConnection()
@@ -18,6 +19,9 @@ const initiateApp = (app , express)=>{
     app.use('/coupon',Routers.couponRouter)
 
     app.use(errorHandler,rollbackCreatedDocuments,rollbackUploadedFiles)
+
+    // cronToChangeExpiredCoupons()
+    // gracefullShutdown() // to stop crons
 
     app.listen(3000, () => console.log(`App listening on port 3000!`))
 }

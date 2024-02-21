@@ -1,6 +1,8 @@
+import { isValidObjectId } from "mongoose"
 import Coupon from "../../../db/models/coupon.model.js"
 import CouponUsers from "../../../db/models/coupons-users.model.js"
 import User from "../../../db/models/user.model.js"
+import { couponValidation } from "../../utils/apply-coupon-validation.js"
 
 export const addCoupon = async(req,res,next)=>{
     const {couponCode,couponAmount,fromDate,toDate,isFixed,isPercentage,users} = req.body
@@ -34,7 +36,7 @@ export const addCoupon = async(req,res,next)=>{
         userIds.push(user.userId)
     }
     const isFound = await User.find({_id:{$in:userIds}})
-    if(!isFound.length != users.length){
+    if(isFound.length != users.length){
         return next(new Error('User not found',{cause:404}))
     }
 
@@ -43,4 +45,14 @@ export const addCoupon = async(req,res,next)=>{
     )
 
     res.status(201).json({message:'Coupon created done', data: coupon, couponUsers})
+}
+
+export const validateCoupon = async(req,res,next)=>{
+    const {code} = req.body
+    const {_id: userId} = req.authUser
+    const isCouponValid = await couponValidation(code,userId)
+    if(isCouponValid.status){
+        return next(new Error(isCouponValid.message,{cause:isCouponValid.status}))
+    }
+    res.status(200).json({message:`@coupon is valid`, data:isCouponValid})
 }
