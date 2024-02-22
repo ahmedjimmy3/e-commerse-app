@@ -8,7 +8,7 @@ const userSchema = new Schema(
         password:{type:String,required:true},
         phoneNumbers:[{type:String,required:true}],
         addresses:[{type:String,required:true}],
-        role:{type:String,enum:[systemRoles.ADMIN,systemRoles.USER,systemRoles.SUPER_ADMIN],default:systemRoles.USER},
+        role:{type:String,enum:Object.values(systemRoles),default:systemRoles.USER},
         isEmailVerified:{type:Boolean,default:false},
         age:{type:Number},
         isLoggedIn:{type:Boolean,default:false}

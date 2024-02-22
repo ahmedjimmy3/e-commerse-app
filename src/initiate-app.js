@@ -17,6 +17,7 @@ const initiateApp = (app , express)=>{
     app.use('/product',Routers.ProductRouter)
     app.use('/cart',Routers.cartRouter)
     app.use('/coupon',Routers.couponRouter)
+    app.use('/order',Routers.orderRouter)
 
     app.use(errorHandler,rollbackCreatedDocuments,rollbackUploadedFiles)
 
