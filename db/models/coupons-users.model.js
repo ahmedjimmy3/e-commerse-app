@@ -25,6 +25,8 @@ const couponUsersSchema = Schema(
     {timestamps:true}
 )
 
+couponUsersSchema.index({couponId:1,userId:1},{unique:true})
+
 couponUsersSchema.pre('validate',function(next){
     if(!this.couponId || !this.userId){
         throw new Error('couponId required')
