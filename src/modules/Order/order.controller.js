@@ -78,62 +78,62 @@ export const createOrder = async(req,res,next)=>{
 export const convertCartToOrder = async(req,res,next)=>{
     const {couponCode,paymentMethod,
         phoneNumbers,address,city,postalCode,country,
-} = req.body
-const {_id: user} = req.authUser
-// check cart
-const userCart = await getUserCart(user)
-if(!userCart){return next(new Error('Cart not found yet',{cause:404}))}
-// check Coupon
-let coupon = null
-if(couponCode){
-    const isValidCoupon = await couponValidation(couponCode,user)
-    if(isValidCoupon.status){return next(new Error(isValidCoupon.message,{cause:isValidCoupon.status}))}
-    coupon = isValidCoupon
-}
-
-let orderItems = userCart.products.map(cartItem => {
-    return {
-        title:cartItem.title,
-        quantity:cartItem.quantity,
-        price:cartItem.basePrice,
-        product:cartItem.productId
+    } = req.body
+    const {_id: user} = req.authUser
+    // check cart
+    const userCart = await getUserCart(user)
+    if(!userCart){return next(new Error('Cart not found yet',{cause:404}))}
+    // check Coupon
+    let coupon = null
+    if(couponCode){
+        const isValidCoupon = await couponValidation(couponCode,user)
+        if(isValidCoupon.status){return next(new Error(isValidCoupon.message,{cause:isValidCoupon.status}))}
+        coupon = isValidCoupon
     }
-})
-// prices
-let shippingPrice = userCart.subTotal
-let totalPrice = shippingPrice
-if(coupon?.isFixed && shippingPrice <= coupon.couponAmount){
-    return next(new Error('You can not use this coupon',{cause:400}))
-}else if(coupon?.isFixed){
-    totalPrice = shippingPrice - coupon.couponAmount
-}else if(coupon?.isPercentage){
-    totalPrice = shippingPrice - (shippingPrice * coupon.couponAmount / 100)
-}
-// order status and payment methods
-let orderStatus
-if(paymentMethod === paymentMethods.CASH) {orderStatus = ordersStatus.PLACED}
-// create order
-const orderObj = new Order({
-    user,
-    orderItems,
-    shippingAddress:{country,address,city,postalCode},
-    phoneNumbers,
-    shippingPrice,
-    coupon:coupon?._id,
-    totalPrice,
-    paymentMethod,
-    orderStatus
-})
-await orderObj.save()
-await Cart.findByIdAndDelete(userCart._id)
-if(coupon){
-    await CouponUsers.updateOne({userId:user,couponId:coupon._id},{$inc:{usageCount: 1}})
-}
-for (const item of orderItems) {
-    await Product.updateOne({_id:item.product},{$inc:{stock: -item.quantity}})
-}
 
-res.status(201).json({message:'Order created successfully',data:orderObj})
+    let orderItems = userCart.products.map(cartItem => {
+        return {
+            title:cartItem.title,
+            quantity:cartItem.quantity,
+            price:cartItem.basePrice,
+            product:cartItem.productId
+        }
+    })
+    // prices
+    let shippingPrice = userCart.subTotal
+    let totalPrice = shippingPrice
+    if(coupon?.isFixed && shippingPrice <= coupon.couponAmount){
+        return next(new Error('You can not use this coupon',{cause:400}))
+    }else if(coupon?.isFixed){
+        totalPrice = shippingPrice - coupon.couponAmount
+    }else if(coupon?.isPercentage){
+        totalPrice = shippingPrice - (shippingPrice * coupon.couponAmount / 100)
+    }
+    // order status and payment methods
+    let orderStatus
+    if(paymentMethod === paymentMethods.CASH) {orderStatus = ordersStatus.PLACED}
+    // create order
+    const orderObj = new Order({
+        user,
+        orderItems,
+        shippingAddress:{country,address,city,postalCode},
+        phoneNumbers,
+        shippingPrice,
+        coupon:coupon?._id,
+        totalPrice,
+        paymentMethod,
+        orderStatus
+    })
+    await orderObj.save()
+    await Cart.findByIdAndDelete(userCart._id)
+    if(coupon){
+        await CouponUsers.updateOne({userId:user,couponId:coupon._id},{$inc:{usageCount: 1}})
+    }
+    for (const item of orderItems) {
+        await Product.updateOne({_id:item.product},{$inc:{stock: -item.quantity}})
+    }
+
+    res.status(201).json({message:'Order created successfully',data:orderObj})
 }
 
 export const orderDelivered = async(req,res,next)=>{
@@ -153,4 +153,3 @@ export const orderDelivered = async(req,res,next)=>{
     }
     res.status(200).json({message:'Order delivered successfully', order: updatedOrder})
 }
-
