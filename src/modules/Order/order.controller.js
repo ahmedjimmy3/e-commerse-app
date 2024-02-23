@@ -9,6 +9,8 @@ import { checkProductAvailability } from "../Cart/utils/check-product-in-db.js"
 import { getUserCart } from "../Cart/utils/get-user-cart.js"
 import { DateTime } from "luxon"
 import generateQrCode from "../../utils/qr-code.js"
+import { nanoid } from "nanoid"
+import createInvoice from "../../utils/pdf-kit.js"
 
 export const createOrder = async(req,res,next)=>{
     const { quantity,product,couponCode,paymentMethod,
@@ -71,6 +73,29 @@ export const createOrder = async(req,res,next)=>{
         totalPrice:orderObj.totalPrice,
         orderStatus:orderObj.orderStatus
     }])
+
+    const orderCode = `${req.authUser.username}_${nanoid(3)}`
+    // generate invoice object
+    const orderInvoice = {
+        shipping:{
+            name:req.authUser.username,
+            address:orderObj.shippingAddress.address,
+            city:orderObj.shippingAddress.city,
+            postalCode:orderObj.shippingAddress.postalCode,
+            country:orderObj.shippingAddress.country,
+        },
+        orderCode,
+        date:orderObj.createdAt,
+        items:[{
+            orderId:orderObj._id,
+            user:orderObj.user,
+            totalPrice:orderObj.totalPrice,
+            orderStatus:orderObj.orderStatus
+        }],
+        subTotal:totalPrice,
+        paidAmount:shippingPrice
+    }
+    createInvoice(orderInvoice,`${orderCode}.pdf`)
 
     res.status(201).json({message:'Order created successfully',data:QRCode})
 }
