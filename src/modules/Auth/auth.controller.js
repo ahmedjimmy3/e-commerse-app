@@ -57,7 +57,7 @@ export const logIn = async(req,res,next)=>{
     if(!isUserExist.isEmailVerified){return next(new Error('Please verify your email first',{cause:400}))}
     // compare password
     const isValidPassword = bcrypt.compareSync(password,isUserExist.password)
-    if(!isValidPassword){return next(new Error('Invalid credentials',{cause:409}))}
+    if(!isValidPassword){return next(new Error('Invalid credentials',{cause:400}))}
     // generate token
     const token = jwt.sign({id:isUserExist._id,email:isUserExist.email,loggedIn:true} , process.env.JWT_SECRET_KEY)
     // change loggedIn to true
