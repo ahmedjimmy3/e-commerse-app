@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { generalValidationRules } from "../../utils/general-usage.js";
+import generalValidationRules from "../../utils/general-validation-rules.js";
 
 export const addCouponSchema ={
     body:Joi.object({
@@ -15,5 +15,6 @@ export const addCouponSchema ={
                 maxUsage: Joi.number().required().min(1)
             })
         )
-    })
+    }),
+    headers:generalValidationRules.headersRule.append({token:Joi.string().required()})
 }
