@@ -5,17 +5,21 @@ import auth from "../../middlewares/auth.middleware.js";
 import multerMiddleware from "../../middlewares/multer-middleware.js";
 import allowedExtensions from "../../utils/allowed-extensions.js";
 import endPointsRoles from "./category-endpoints.js";
+import validationMiddleware from '../../middlewares/validation-middleware.js'
+import * as categoryValidationSchemas from './category.validation-schemas.js' 
 
 const router = Router();
 
 
 router.post('/', 
+    asyncWrapper(validationMiddleware(categoryValidationSchemas.addCategorySchema)),
     asyncWrapper(auth(endPointsRoles.ADD_CATEGORY)),
     multerMiddleware({extension:allowedExtensions.IMAGE_FORMAT}).single('image'),
     asyncWrapper(categoryController.addCategory)
 )
 
 router.put('/:categoryId', 
+    asyncWrapper(validationMiddleware(categoryValidationSchemas.updateCategorySchema)),
     asyncWrapper(auth(endPointsRoles.ADD_CATEGORY)),
     multerMiddleware({extension:allowedExtensions.IMAGE_FORMAT}).single('image'),
     asyncWrapper(categoryController.updateCategory)
@@ -26,6 +30,7 @@ router.get('/',
 )
 
 router.delete('/:categoryId',
+    asyncWrapper(validationMiddleware(categoryValidationSchemas.deleteCategorySchema)),
     asyncWrapper(auth(endPointsRoles.ADD_CATEGORY)),
     asyncWrapper(categoryController.deleteCategory)
 )
