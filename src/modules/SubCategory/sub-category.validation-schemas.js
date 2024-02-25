@@ -4,7 +4,6 @@ import generalValidationRules from '../../utils/general-validation-rules.js'
 export const addSubCategorySchema = {
     body:Joi.object({
         name:Joi.string().required(),
-        image:Joi.boolean().valid(true)
     }),
     params:Joi.object({
         categoryId:generalValidationRules.dbId.required()
@@ -22,7 +21,6 @@ export const deleteSubCategorySchema = {
 export const updateSubCategorySchema = {
     body:Joi.object({
         name:Joi.string(),
-        image:Joi.boolean().valid(true),
         oldPublicId:Joi.string()
     }).xor('image','oldPublicId'),
     params:Joi.object({
