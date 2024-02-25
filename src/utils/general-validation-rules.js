@@ -28,7 +28,7 @@ const generalValidationRules = {
         country:Joi.string().required(),
         postalCode:Joi.string().required().max(4),
         city:Joi.string().required()
-    })
+    }),
 }
 
 export default generalValidationRules

@@ -41,9 +41,13 @@ export const addSubCategory = async(req,res,next)=>{
 }
 
 export const allSubCategories = async(req,res,next)=>{
-    const subCategories = await SubCategory.find().populate([
-        {path:'Brands' , select:'-_id -folderId'}
-    ])
+    const subCategories = await SubCategory.find().populate([{  
+        path:'Brands' ,
+        select:'-_id -folderId',
+        populate: [{
+            path:'Products'
+        }],
+    }])
     res.status(200).json({message:'All sub-categories with their brands',subCategories})
 }
 
