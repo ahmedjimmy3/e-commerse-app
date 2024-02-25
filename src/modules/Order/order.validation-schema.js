@@ -1,6 +1,5 @@
 import Joi from 'joi'
 import generalValidationRules from '../../utils/general-validation-rules.js'
-import paymentMethods from '../../utils/payment-Methods.js'
 
 export const makeOrderSchema = {
     body:generalValidationRules.makeOrder.required().append({

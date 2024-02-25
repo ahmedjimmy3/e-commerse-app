@@ -12,16 +12,16 @@ const router = Router();
 
 
 router.post('/', 
-    asyncWrapper(validationMiddleware(categoryValidationSchemas.addCategorySchema)),
     asyncWrapper(auth(endPointsRoles.ADD_CATEGORY)),
     multerMiddleware({extension:allowedExtensions.IMAGE_FORMAT}).single('image'),
+    asyncWrapper(validationMiddleware(categoryValidationSchemas.addCategorySchema)),
     asyncWrapper(categoryController.addCategory)
 )
 
 router.put('/:categoryId', 
-    asyncWrapper(validationMiddleware(categoryValidationSchemas.updateCategorySchema)),
     asyncWrapper(auth(endPointsRoles.ADD_CATEGORY)),
     multerMiddleware({extension:allowedExtensions.IMAGE_FORMAT}).single('image'),
+    asyncWrapper(validationMiddleware(categoryValidationSchemas.updateCategorySchema)),
     asyncWrapper(categoryController.updateCategory)
 )
 

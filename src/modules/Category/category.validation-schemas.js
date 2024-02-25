@@ -4,17 +4,17 @@ import generalValidationRules from '../../utils/general-validation-rules.js'
 export const addCategorySchema = {
     body:Joi.object({
         name:Joi.string().required(),
-        image:Joi.string().required()
+        image:Joi.boolean().valid(true).required()
     }),
     headers:generalValidationRules.headersRule.append({token:Joi.string().required()}),
 }
 
 export const updateCategorySchema = {
     body:Joi.object({
-        oldPublicId:Joi.string(),
-        image:Joi.string().valid(true),
-        name:Joi.string()
-    }).with('image', 'oldPublicId'),
+        name:Joi.string(),
+        image:Joi.boolean(),
+        oldPublicId:Joi.string()
+    }),
     params:Joi.object({
         categoryId:generalValidationRules.dbId.required()
     }),
