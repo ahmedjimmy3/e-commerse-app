@@ -8,6 +8,17 @@ import * as orderValidationSchemas from './order.validation-schema.js'
 
 const router = Router()
 
+router.post('/stripePay/:orderId',
+    asyncWrapper(auth(endPointsRoles.MAKE_ORDER)),
+    asyncWrapper(orderController.payWithStripe)
+)
+router.post('/webhook',
+    asyncWrapper(orderController.stripeWebhook)
+)
+router.post('/refund/:orderId',
+    asyncWrapper(auth(endPointsRoles.REFUND)),
+    asyncWrapper(orderController.refundOrder),
+)
 router.post('/',
     asyncWrapper(validationMiddleware(orderValidationSchemas.makeOrderSchema)),
     asyncWrapper(auth(endPointsRoles.MAKE_ORDER)),
@@ -23,5 +34,4 @@ router.put('/:orderId',
     asyncWrapper(auth(endPointsRoles.DELIVERED_ORDER)),
     asyncWrapper(orderController.orderDelivered)
 )
-
 export default router

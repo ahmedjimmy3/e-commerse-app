@@ -19,6 +19,10 @@ const initiateApp = (app , express)=>{
     app.use('/coupon',Routers.couponRouter)
     app.use('/order',Routers.orderRouter)
 
+    app.use('*',(req,res,next)=>{
+        res.status(404).json({message:'Not Found!!'})
+    })
+
     app.use(errorHandler,rollbackCreatedDocuments,rollbackUploadedFiles)
 
     // cronToChangeExpiredCoupons()

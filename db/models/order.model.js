@@ -29,7 +29,10 @@ const orderSchema = new Schema(
         deliveredAt:{type:String},
         deliveredBy:{type:Schema.Types.ObjectId,ref:'User'},
         cancelledAt:{type:String},
-        cancelledBy:{type:Schema.Types.ObjectId,ref:'User'}
+        cancelledBy:{type:Schema.Types.ObjectId,ref:'User'},
+        paymentIntent:{
+            type:String
+        }
     },
     {timestamps:true}
 )
