@@ -1,11 +1,11 @@
 import User from '../../../db/models/user.model.js'
-import * as userDbMethods from './auth.repo.js'
+import * as authRepo from './auth.repo.js'
 import sendEmailService from '../services/send-email.services.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
 export const createUserFunction = async(user,req)=>{
-    const isEmailExist  = await userDbMethods.findUserByEmail(user.email)
+    const isEmailExist  = await authRepo.findUserByEmail(user.email)
     if(isEmailExist){
         throw({message:'This email already used',cause:409})
     }
@@ -22,7 +22,7 @@ export const createUserFunction = async(user,req)=>{
     }
     const hashedPassword = bcrypt.hashSync(user.password,+process.env.SALT_ROUNDS)
     user.password = hashedPassword
-    const createdUser = await userDbMethods.createUser(user)
+    const createdUser = await authRepo.createUser(user)
     if(!createdUser){
         throw({message:'Registration Failed',cause:400})
     }
@@ -44,7 +44,7 @@ export const verifyEmailFunction = async(token)=>{
 }
 
 export const logInFunction = async(email,password)=>{
-    const isUserExist = await userDbMethods.findUserByEmail(email)
+    const isUserExist = await authRepo.findUserByEmail(email)
     if(!isUserExist){
         throw({message:'Invalid credentials',cause:400})
     }
