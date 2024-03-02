@@ -3,6 +3,7 @@ import Coupon from '../../db/models/coupon.model.js';
 
 
 export const createCheckoutSession = async({customer_email,metadata,discounts,line_items})=>{
+    // establish connection to the stripe Api
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
     const paymentData = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
