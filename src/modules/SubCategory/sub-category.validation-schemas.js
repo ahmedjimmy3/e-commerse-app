@@ -22,7 +22,7 @@ export const updateSubCategorySchema = {
     body:Joi.object({
         name:Joi.string(),
         oldPublicId:Joi.string()
-    }).xor('image','oldPublicId'),
+    }),
     params:Joi.object({
         subCategoryId:generalValidationRules.dbId.required()
     }),
