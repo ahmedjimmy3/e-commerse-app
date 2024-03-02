@@ -12,7 +12,7 @@ export const updateCategorySchema = {
     body:Joi.object({
         name:Joi.string(),
         oldPublicId:Joi.string()
-    }).xor('image','oldPublicId'),
+    }),
     params:Joi.object({
         categoryId:generalValidationRules.dbId.required()
     }),
