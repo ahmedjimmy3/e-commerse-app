@@ -37,4 +37,12 @@ router.post('/forget-pass',
 router.put('/set/reset-password',
     asyncWrapper(userController.resetPassword)
 )
+
+router.patch('/updatePassword/:userId',
+    asyncWrapper(validationMiddleware(userValidationSchemas.updatePasswordSchema)),
+    asyncWrapper(auth(endpointRoles.GENERAL_USAGE)),
+    asyncWrapper(checkOwnerAccount),
+    asyncWrapper(userController.updatePassword)
+)
+
 export default router

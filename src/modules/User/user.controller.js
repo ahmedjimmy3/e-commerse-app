@@ -32,3 +32,10 @@ export const resetPassword = async(req,res,next)=>{
     await userServices.resetPasswordFunction(token,OTPCode,password)
     res.status(200).json({message:'Password Reset Successfully...'})
 }
+
+export const updatePassword = async(req,res,next)=>{
+    const {userId} = req.params
+    const {oldPassword,newPassword} = req.body
+    await userServices.updatePasswordFunction(userId,oldPassword,newPassword)
+    res.status(200).json({message:'Password updated successfully'})
+}

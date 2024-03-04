@@ -129,5 +129,19 @@ export const resetPasswordFunction = async(token,OTPCode,newPassword)=>{
     userFound.password = bcrypt.hashSync(newPassword,+process.env.SAULT_ROUNDS)
     userFound.isLoggedIn = true
     await userFound.save()
-    return userFound
+    return
+}
+
+export const updatePasswordFunction = async(userId,oldPassword,newPassword)=>{
+    const user = await User.findById(userId)
+    if(!user){
+        throw({message:'This user not found',cause:404})
+    }
+    const checkPassword = bcrypt.compareSync(oldPassword,user.password)
+    if(!checkPassword){
+        throw({message:'Invalid Password',cause:400})
+    }
+    user.password = bcrypt.hashSync(newPassword,+process.env.SAULT_ROUNDS)
+    await user.save()
+    return
 }

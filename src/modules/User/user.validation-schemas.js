@@ -38,7 +38,8 @@ export const updateUserSchema = {
 export const forgetPasswordSchema = {
     body:Joi.object({
         email:Joi.string().email().required()
-    })
+    }),
+    headers:generalValidationRules.headersRule
 }
 
 export const resetPasswordSchema = {
@@ -48,5 +49,17 @@ export const resetPasswordSchema = {
     }),
     query:Joi.object({
         token:Joi.string().required()
-    })
+    }),
+    headers:generalValidationRules.headersRule
+}
+
+export const updatePasswordSchema = {
+    body:Joi.object({
+        oldPassword:Joi.string().required(),
+        newPassword:Joi.string().required().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
+        rePass:Joi.string().required().valid(Joi.ref('newPassword'))
+    }).with('newPassword','rePass'),
+    headers:generalValidationRules.headersRule.append({
+        token:Joi.string().required()
+    }),
 }
