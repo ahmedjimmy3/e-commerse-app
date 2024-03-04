@@ -1,10 +1,3 @@
-import { query } from 'express'
-import Brand from '../../../db/models/brand.model.js'
-import Product from '../../../db/models/product.model.js'
-import SubCategory from '../../../db/models/sub-category.model.js'
-import cloudinary from '../../utils/cloduinary.js'
-import generateUniqueString from '../../utils/generate-unique-string.js'
-import slugify from 'slugify'
 import * as brandServices from './brand.services.js'
 
 export const addBrand = async(req,res,next)=>{
