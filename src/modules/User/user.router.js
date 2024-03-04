@@ -30,4 +30,11 @@ router.put('/:userId',
     asyncWrapper(userController.updateUser)
 )
 
+router.post('/forget-pass',
+    asyncWrapper(userController.forgetPassword)
+)
+
+router.put('/set/reset-password',
+    asyncWrapper(userController.resetPassword)
+)
 export default router

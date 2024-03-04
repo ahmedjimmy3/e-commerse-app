@@ -18,4 +18,17 @@ export const updateUser = async(req,res,next)=>{
     const {username,email,phoneNumbers,addresses,age} = req.body
     const updateUser = await userServices.updateUserFunction(userId,username,email,phoneNumbers,addresses,age,req)
     res.status(200).json({message:'Updated Done',data:updateUser})
-}   
+}
+
+export const forgetPassword = async(req,res,next)=>{
+    const {email} = req.body
+    const OTPCode = await userServices.forgetPasswordFunction(email,req)
+    res.status(200).json({message:'Please check your email to reset-password !',OTPCode})
+}
+
+export const resetPassword = async(req,res,next)=>{
+    const {token} = req.query
+    const {password,OTPCode} = req.body
+    await userServices.resetPasswordFunction(token,OTPCode,password)
+    res.status(200).json({message:'Password Reset Successfully...'})
+}

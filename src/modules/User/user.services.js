@@ -1,4 +1,3 @@
-import Category from "../../../db/models/category.model.js";
 import User from "../../../db/models/user.model.js";
 import SubCategory from '../../../db/models/sub-category.model.js'
 import Brand from '../../../db/models/brand.model.js'
@@ -8,6 +7,8 @@ import systemRoles from "../../utils/system-roles.js";
 import * as userRepo from './user.repo.js'
 import jwt from 'jsonwebtoken'
 import sendEmailService from '../services/send-email.services.js'
+import generateUniqueString from '../../utils/generate-unique-string.js'
+import bcrypt from 'bcrypt'
 
 export const getUserDataFunction =async(userId)=>{
     const data = await userRepo.findUserById(userId)
@@ -93,4 +94,40 @@ export const deleteUserFunction = async(_id,role,userId)=>{
     const deleteUser = await User.findByIdAndDelete(userId)
     if(!deleteUser){return next(new Error('Deletion Failed',{cause:400}))}
     return deleteUser
+}
+
+export const forgetPasswordFunction = async(email,req)=>{
+    const user = await userRepo.findUserByEmail(email)
+    if(!user){throw({message:'This email not found',cause:404})}
+    if(!user.isEmailVerified){throw({message:'Please verify your email',cause:400})}
+    if(user.isLoggedIn){throw({message:'You are already login',cause:400})}
+    const userToken = jwt.sign({email} , process.env.JWT_SECRET_VERIFICATION,{expiresIn:"30s"})
+    const isEmailSend = await sendEmailService({
+        to:user.email,
+        subject:'Forget Password',
+        message:`
+            <h2>Please click on this link to reset new password</h2>
+            <a href="${req.protocol}://${req.headers.host}/user/set/reset-password?token=${userToken}">Reset Password</a>`,
+    })
+    if(!isEmailSend){throw({message:'This email was not sent',cause:500})}
+    const OTPCode = generateUniqueString()
+    user.OTPCode = bcrypt.hashSync(OTPCode,+process.env.SAULT_ROUNDS)
+    await user.save()
+    return OTPCode
+}
+
+export const resetPasswordFunction = async(token,OTPCode,newPassword)=>{
+    if(!token){throw({message:'Invalid Token',cause:400})}
+    const {email} = jwt.verify(token,process.env.JWT_SECRET_VERIFICATION)
+    const userFound = await userRepo.findUserByEmail(email)
+    if(!userFound || !userFound.OTPCode){
+        throw({message:'This account does not found',cause:404})
+    }
+    const checkValidOTP = bcrypt.compareSync(OTPCode,userFound.OTPCode)
+    if(!checkValidOTP){throw({message:'Invalid OTP',cause:400})}
+    userFound.OTPCode = undefined
+    userFound.password = bcrypt.hashSync(newPassword,+process.env.SAULT_ROUNDS)
+    userFound.isLoggedIn = true
+    await userFound.save()
+    return userFound
 }

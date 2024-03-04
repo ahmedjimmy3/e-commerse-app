@@ -11,7 +11,8 @@ const userSchema = new Schema(
         role:{type:String,enum:Object.values(systemRoles),default:systemRoles.USER},
         isEmailVerified:{type:Boolean,default:false},
         age:{type:Number},
-        isLoggedIn:{type:Boolean,default:false}
+        isLoggedIn:{type:Boolean,default:false},
+        OTPCode:{type:String}
     },
     {
         timestamps:true,

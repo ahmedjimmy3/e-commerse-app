@@ -34,3 +34,19 @@ export const updateUserSchema = {
         age:Joi.number().integer()
     }),
 }
+
+export const forgetPasswordSchema = {
+    body:Joi.object({
+        email:Joi.string().email().required()
+    })
+}
+
+export const resetPasswordSchema = {
+    body:Joi.object({
+        password:Joi.string().required().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
+        OTPCode:Joi.string().required().max(6)
+    }),
+    query:Joi.object({
+        token:Joi.string().required()
+    })
+}
