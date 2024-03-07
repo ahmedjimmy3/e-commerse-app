@@ -87,3 +87,9 @@ export const deleteCategoryFunction = async(categoryId)=>{
 
     return category
 }
+
+export const getCategoryByIdFunction= async(categoryId)=>{
+    const categoryFound = await categoryRepo.findCategoryById(categoryId)
+    if(!categoryFound){throw({message:'No category found with this id',cause:404})}
+    return categoryFound
+}

@@ -90,7 +90,7 @@ export const createOrder = async(req,res,next)=>{
     //     items:[{
     //         orderId:orderObj._id,
     //         user:orderObj.user,
-    //         totalPrice:orderObj.totalPrice,
+    //         totalPrice:totalPrice,
     //         orderStatus:orderObj.orderStatus
     //     }],
     //     subTotal:totalPrice,
@@ -249,3 +249,21 @@ export const refundOrder = async(req,res,next)=>{
     await order.save()
     res.status(200).json({message:'Order refunded successfully',data:refund})
 }
+
+// cancel order within one day after creation
+export const cancelOrder = async(req,res,next)=>{
+    const {orderId} = req.params
+    const order = await Order.findOne({
+        _id:orderId,
+        orderStatus:{$in:[ordersStatus.PENDING,ordersStatus.PLACED]},
+        isPaid:false,
+    })
+    if(!order){return next(new Error('This order not found',{cause:404}))}
+    const dayNow = DateTime.now().minus({days:1})
+    if(order.createdAt < dayNow){
+        return next(new Error('This order can not be cancelled',{cause:400}))
+    }
+    order.orderStatus = ordersStatus.CANCELLED
+    await order.save()
+    res.status(200).json({message:'Order cancelled successfully',data:order})
+}   

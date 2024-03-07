@@ -37,5 +37,11 @@ const productSchema = new Schema(
     }
 )
 
+productSchema.virtual('Reviews',{
+    ref:'Review',
+    localField:'_id',
+    foreignField:'productId'
+})
+
 const Product = model('Product',productSchema)
 export default Product

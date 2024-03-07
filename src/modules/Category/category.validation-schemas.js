@@ -25,3 +25,10 @@ export const deleteCategorySchema = {
     }),
     headers:generalValidationRules.headersRule.append({token:Joi.string().required()})
 }
+
+export const getCategoryByIdSchema = {
+    params:Joi.object({
+        categoryId:generalValidationRules.dbId.required()
+    }),
+    headers:generalValidationRules.headersRule.append({token:Joi.string()})
+}

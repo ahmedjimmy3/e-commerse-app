@@ -19,3 +19,11 @@ export const getAllBrands = async function(){
 export const deleteBrand = async function(brandId){
     return await Brand.findByIdAndDelete(brandId)
 }
+
+export const getBrandsToSpecificSubCategory = async function(subCategoryId){
+    return await Brand.find({subCategoryId})
+}
+
+export const getBrandsToSpecificCategory = async function(categoryId){
+    return await Brand.find({categoryId})
+}

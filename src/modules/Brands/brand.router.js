@@ -24,6 +24,16 @@ router.get('/',
     asyncWrapper(brandController.allBrands)
 )
 
+router.get('/specificSub-Category',
+    asyncWrapper(validationMiddleware(brandValidationSchemas.getBrandsToSpecificSubCategorySchema)),
+    asyncWrapper(brandController.allBrandsToSpecificSubCategory)
+)
+
+router.get('/specificCategory',
+    asyncWrapper(validationMiddleware(brandValidationSchemas.getBrandsToSpecificCategorySchema)),
+    asyncWrapper(brandController.allBrandsToSpecificCategory)
+)
+
 router.put('/:brandId',
     asyncWrapper(auth(endPointsRoles.GENERAL_BRAND)),
     asyncWrapper(checkOwnerBrand),

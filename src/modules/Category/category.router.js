@@ -29,6 +29,11 @@ router.get('/',
     asyncWrapper(categoryController.getAllCategories)
 )
 
+router.get('/getCategory/:categoryId',
+    asyncWrapper(categoryValidationSchemas.getCategoryByIdSchema),
+    asyncWrapper(categoryController.getCategoryById)
+)
+
 router.delete('/:categoryId',
     asyncWrapper(validationMiddleware(categoryValidationSchemas.deleteCategorySchema)),
     asyncWrapper(auth(endPointsRoles.ADD_CATEGORY)),

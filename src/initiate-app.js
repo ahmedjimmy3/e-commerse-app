@@ -18,6 +18,7 @@ const initiateApp = (app , express)=>{
     app.use('/cart',Routers.cartRouter)
     app.use('/coupon',Routers.couponRouter)
     app.use('/order',Routers.orderRouter)
+    app.use('/review',Routers.reviewRouter)
 
     app.use('*',(req,res,next)=>{
         res.status(404).json({message:'Not Found!!'})

@@ -20,3 +20,10 @@ export const deliveryOrderSchema = {
         orderId:generalValidationRules.dbId.required()
     })
 }
+
+export const cancelOrderSchema = {
+    headers:generalValidationRules.headersRule.append({token:Joi.string().required()}),
+    params:Joi.object({
+        orderId:generalValidationRules.dbId.required()
+    })
+}

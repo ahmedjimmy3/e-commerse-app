@@ -85,3 +85,15 @@ export const updateSubCategoryFunction = async({subCategoryId,name,oldPublicId,_
     await subCategoryFound.save()
     return subCategoryFound
 }
+
+export const getAllSubCategoriesToSpecificCategoryFunction = async(categoryId)=>{
+    const subCategories = await SubCategory.find({categoryId})
+    if(!subCategories.length){throw({message:'This have not sub-categories yet',cause:404})}
+    return subCategories
+}
+
+export const getSubCategoryByIdFunction = async(subCategoryId)=>{
+    const subCategory = await subCategoryRepo.getSubCategoryById(subCategoryId)
+    if(!subCategory){throw({message:'This sub-category not found',cause:404})}
+    return subCategory
+}

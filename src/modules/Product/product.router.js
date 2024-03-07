@@ -41,6 +41,10 @@ router.get('/:productId',
     asyncWrapper(productController.getProductById)
 )
 
+router.get('/rev/productReviews',
+    asyncWrapper(productController.getAllProductsWithTheirReviews)
+)
+
 router.delete('/:productId',
     asyncWrapper(validationMiddleware(productValidationSchemas.deleteProductSchema)),
     asyncWrapper(auth(endpointRoles.GENERAL_PRODUCT)),

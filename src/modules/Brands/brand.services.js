@@ -78,3 +78,15 @@ export const deleteBrandFunction = async function(brandId){
     await cloudinary.api.delete_folder(path)
     return brandDeleted
 }
+
+export const getAllBrandsToSpecificSubCategoryFunction = async function(subCategoryId){
+    const brands = await brandRepo.getBrandsToSpecificSubCategory(subCategoryId)
+    if(!brands.length){throw({message:'There are no brands to this sub-category',cause:404})}
+    return brands
+}
+
+export const getAllBrandsToSpecificCategoryFunction = async function(categoryId){
+    const brands = await brandRepo.getBrandsToSpecificCategory(categoryId)
+    if(!brands.length){throw({message:'There are no brands to this category',cause:404})}
+    return brands
+}

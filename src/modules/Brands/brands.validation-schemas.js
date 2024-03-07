@@ -29,3 +29,17 @@ export const deleteBrandSchema = {
     }),
     headers:generalValidationRules.headersRule.append({token:Joi.string().required()})
 }
+
+export const getBrandsToSpecificSubCategorySchema = {
+    query:Joi.object({
+        subCategoryId:generalValidationRules.dbId.required()
+    }),
+    headers:generalValidationRules.headersRule.append({token:Joi.string()})
+}
+
+export const getBrandsToSpecificCategorySchema = {
+    query:Joi.object({
+        categoryId:generalValidationRules.dbId.required()
+    }),
+    headers:generalValidationRules.headersRule.append({token:Joi.string()})
+}

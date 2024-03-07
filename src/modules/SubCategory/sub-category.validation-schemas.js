@@ -28,3 +28,17 @@ export const updateSubCategorySchema = {
     }),
     headers:generalValidationRules.headersRule.append({token:Joi.string().required()})
 }
+
+export const getAllSubCategoriesToSpecificCategorySchema = {
+    query:Joi.object({
+        categoryId:generalValidationRules.dbId.required()
+    }),
+    headers:generalValidationRules.headersRule.append({token:Joi.string()})
+}
+
+export const getSubCategoryByIdSchema = {
+    params:Joi.object({
+        subCategoryId:generalValidationRules.dbId.required()
+    }),
+    headers:generalValidationRules.headersRule.append({token:Joi.string()})
+}

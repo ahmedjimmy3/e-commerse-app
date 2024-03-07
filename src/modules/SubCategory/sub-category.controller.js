@@ -26,3 +26,15 @@ export const deleteSubCategory = async(req,res,next)=>{
     await subCategoryServices.deleteSubCategoryFunction(subCategoryId)
     res.status(200).json({message:'Deleted Done:)'})
 }
+
+export const toSpecificCategory = async(req,res,next)=>{
+    const {categoryId} = req.query
+    const subCategories = await subCategoryServices.getAllSubCategoriesToSpecificCategoryFunction(categoryId)
+    res.status(200).json({message:'All sub-categories to specific category',subCategories})
+}
+
+export const getSubCategoryById = async(req,res,next)=>{
+    const {subCategoryId} = req.params
+    const subCategoryFound = await subCategoryServices.getSubCategoryByIdFunction(subCategoryId)
+    res.status(200).json({message:'Sub-category found',subCategoryFound})
+}

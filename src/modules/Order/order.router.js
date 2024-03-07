@@ -5,11 +5,12 @@ import auth from '../../middlewares/auth.middleware.js'
 import endPointsRoles from './order-endpoints.js'
 import validationMiddleware from '../../middlewares/validation-middleware.js'
 import * as orderValidationSchemas from './order.validation-schema.js'
+import checkOwnerOfOrder from '../../middlewares/check-owner-order.middleware.js'
 
 const router = Router()
 
 router.post('/stripePay/:orderId',
-    asyncWrapper(auth(endPointsRoles.MAKE_ORDER)),
+    asyncWrapper(auth(endPointsRoles.MAKE_OR_CANCEL_ORDER)),
     asyncWrapper(orderController.payWithStripe)
 )
 router.post('/webhook',
@@ -34,4 +35,10 @@ router.put('/:orderId',
     asyncWrapper(auth(endPointsRoles.DELIVERED_ORDER)),
     asyncWrapper(orderController.orderDelivered)
 )
+router.patch('/cancelOrder/:orderId',
+    asyncWrapper(validationMiddleware(orderValidationSchemas.cancelOrderSchema)),
+    asyncWrapper(auth(endPointsRoles.MAKE_OR_CANCEL_ORDER)),
+    asyncWrapper(checkOwnerOfOrder),
+    asyncWrapper(orderController.cancelOrder))
+
 export default router

@@ -22,6 +22,10 @@ router.get('/',
     asyncWrapper(subCategoryController.allSubCategories)
 )
 
+router.get('/:subCategoryId',
+    asyncWrapper(subCategoryController.getSubCategoryById)
+)
+
 router.put('/:subCategoryId',
     asyncWrapper(auth(endPointsRoles.GENERAL_SUB_CATEGORY)),
     multerMiddleware({extension:allowedExtensions.IMAGE_FORMAT}).single('image'),
@@ -33,6 +37,11 @@ router.delete('/:subCategoryId',
     asyncWrapper(validationMiddleware(subCategoryValidationSchemas.deleteSubCategorySchema)),
     asyncWrapper(auth(endPointsRoles.GENERAL_SUB_CATEGORY)),
     asyncWrapper(subCategoryController.deleteSubCategory)
+)
+
+router.get('/v1/toSpecificCategory',
+    asyncWrapper(validationMiddleware(subCategoryValidationSchemas.getAllSubCategoriesToSpecificCategorySchema)),
+    asyncWrapper(subCategoryController.toSpecificCategory)
 )
 
 export default router

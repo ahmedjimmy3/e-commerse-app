@@ -132,3 +132,8 @@ export const productsForSpecificBrands = async(req,res,next)=>{
     const products = await Product.find({brandId: {$in: brand}})
     res.status(200).json({message:'All products for two brands', data:products})
 } 
+
+export const getAllProductsWithTheirReviews = async(req,res,next)=>{
+    const products = await Product.find().populate('Reviews')
+    res.status(200).json({message:'All Products with their reviews',data:products})
+}

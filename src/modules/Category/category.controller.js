@@ -25,3 +25,9 @@ export const deleteCategory = async(req,res,next)=>{
     await categoryServices.deleteCategoryFunction(categoryId)
     res.status(200).json({message:'Deleted Done'})
 }
+
+export const getCategoryById = async(req,res,next)=>{
+    const {categoryId} = req.params
+    const categoryFound = await categoryServices.getCategoryByIdFunction(categoryId)
+    res.status(200).json({message:'Category found',data:categoryFound})
+}
