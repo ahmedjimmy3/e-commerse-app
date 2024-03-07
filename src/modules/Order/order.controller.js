@@ -250,7 +250,6 @@ export const refundOrder = async(req,res,next)=>{
     res.status(200).json({message:'Order refunded successfully',data:refund})
 }
 
-// cancel order within one day after creation
 export const cancelOrder = async(req,res,next)=>{
     const {orderId} = req.params
     const order = await Order.findOne({
@@ -266,4 +265,4 @@ export const cancelOrder = async(req,res,next)=>{
     order.orderStatus = ordersStatus.CANCELLED
     await order.save()
     res.status(200).json({message:'Order cancelled successfully',data:order})
-}   
+}
