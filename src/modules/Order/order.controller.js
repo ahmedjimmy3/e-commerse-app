@@ -258,9 +258,11 @@ export const cancelOrder = async(req,res,next)=>{
         isPaid:false,
     })
     if(!order){return next(new Error('This order not found',{cause:404}))}
-    const dayNow = DateTime.now().minus({days:1})
-    if(order.createdAt < dayNow){
-        return next(new Error('This order can not be cancelled',{cause:400}))
+    const dayNow = DateTime.now()
+    const allowDay = dayNow.minus({days:1})
+    const orderCreatedAt = DateTime.fromISO(order.createdAt)
+    if(!orderCreatedAt >= dayNow.startOf('day') && !orderCreatedAt <= allowDay.startOf('day')){
+        return next(new Error('This order can not be cancelled',{cause:403}))
     }
     order.orderStatus = ordersStatus.CANCELLED
     await order.save()
