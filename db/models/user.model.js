@@ -12,7 +12,8 @@ const userSchema = new Schema(
         isEmailVerified:{type:Boolean,default:false},
         age:{type:Number},
         isLoggedIn:{type:Boolean,default:false},
-        OTPCode:{type:String}
+        OTPCode:{type:String},
+        provider:{type:String,enum:['GOOGLE','SYSTEM']}
     },
     {
         timestamps:true,

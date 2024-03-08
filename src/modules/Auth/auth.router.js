@@ -10,6 +10,12 @@ router.post('/signup' ,
     asyncWrapper(validationMiddleware(authValidation.SignUpSchema)),
     asyncWrapper(authController.signUp)
 )
+router.post('/loginWithGmail',
+    asyncWrapper(authController.loginWithGmail)
+)
+router.post('/signUpWithGmail',
+    asyncWrapper(authController.signUpWithGmail)
+)
 router.get('/verify-email',
     asyncWrapper(authController.verifyEmail)
 )

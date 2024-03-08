@@ -4,11 +4,13 @@ import errorHandler from './middlewares/errorHandler.middleware.js'
 import rollbackUploadedFiles from "./middlewares/rollback-uploadedFiles.middleware.js"
 import rollbackCreatedDocuments from "./middlewares/rollback-created-documents.middleware.js"
 import cronToChangeExpiredCoupons from "./utils/crons.js"
+import cors from 'cors'
 
 const initiateApp = (app , express)=>{
     dbConnection()
 
     app.use(express.json())
+    app.use(cors())
     app.use('/auth' , Routers.authRouter)
     app.use('/user',Routers.userRouter)
     app.use('/category',Routers.categoryRouter)
