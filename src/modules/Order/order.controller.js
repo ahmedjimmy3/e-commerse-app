@@ -252,6 +252,7 @@ export const refundOrder = async(req,res,next)=>{
 
 export const cancelOrder = async(req,res,next)=>{
     const {orderId} = req.params
+    const {_id:userId} = req.authUser
     const order = await Order.findOne({
         _id:orderId,
         orderStatus:{$in:[ordersStatus.PENDING,ordersStatus.PLACED]},
@@ -265,6 +266,8 @@ export const cancelOrder = async(req,res,next)=>{
         return next(new Error('This order can not be cancelled',{cause:403}))
     }
     order.orderStatus = ordersStatus.CANCELLED
+    order.cancelledAt = DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss')
+    order.cancelledBy = userId
     await order.save()
     res.status(200).json({message:'Order cancelled successfully',data:order})
 }
