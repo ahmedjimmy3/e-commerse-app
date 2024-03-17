@@ -1,10 +1,4 @@
-import Cart from "../../../db/models/cart.model.js";
-import { getUserCart } from "./utils/get-user-cart.js";
-import { checkProductAvailability } from "./utils/check-product-in-db.js";
-import { createCart } from "./utils/create-cart.js";
-import { updateProductQuantity } from "./utils/update-product-quantity.js";
-import { pushNewProduct } from "./utils/add-product-to-cart.js";
-import { calcSubTotal } from "./utils/calculate-sub-total.js";
+import * as cartServices from './cart.services.js'
 
 /**
  * @param {productId , quantity} from req.body
@@ -21,40 +15,13 @@ import { calcSubTotal } from "./utils/calculate-sub-total.js";
 export const addProductToCart = async(req,res,next)=>{
     const {productId , quantity} = req.body
     const {_id} = req.authUser
-
-    const product = await checkProductAvailability(quantity,productId)
-    if(!product){return next(new Error('Product not found or not available',{cause:404}))}
-
-    const userCart = await getUserCart(_id)
-    if(!userCart){
-        const createdCart = await createCart(_id,productId,quantity,product)
-        return res.status(201).json({message:'Product added successfully', data:createdCart})
-    }
-
-    const isUpdated = await updateProductQuantity(userCart,productId,quantity)
-    if(!isUpdated){
-        const added = await pushNewProduct(userCart,product,quantity)
-        if(!added){return next(new Error('Product not added to cart',{cause:400}))}
-    }
+    const userCart = await cartServices.addProductToCartFunction(productId,quantity,_id)
     res.status(200).json({message:'Product added successfully',data:userCart})
 }
 
 export const removeFromCart = async(req,res,next)=>{
     const {productId} = req.params
     const {_id} = req.authUser
-
-    const userCart = await Cart.findOne({userId:_id , 'products.productId':productId})
-    if(!userCart){return next(new Error('Product not found in cart',{cause:404}))}
-
-    userCart.products = userCart.products.filter(product => product.productId.toString() !== productId )
-
-    userCart.subTotal = calcSubTotal(userCart)
-
-    const newCart = await userCart.save()
-
-    if(newCart.products.length==0){
-        await Cart.findByIdAndDelete(newCart._id)
-    }
-
+    await cartServices.removeProductFromCartFunction(productId,_id);
     res.status(200).json({message:'Product deleted done'})
 }
