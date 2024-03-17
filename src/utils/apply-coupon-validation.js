@@ -11,7 +11,7 @@ export const couponValidation = async(couponCode, userId)=>{
         return {message:'CouponCode is not valid',status:400}
     }
     // coupon status check
-    if(coupon.couponStatus == couponStatus.EXPIRED || DateTime.fromISO(coupon.toDate)< DateTime.now()){
+    if((coupon.couponStatus == couponStatus.EXPIRED) || (DateTime.fromISO(coupon.toDate) < DateTime.now())){
         return {message:'Coupon is expired', status:400}
     }
     // fromDate check is valid
